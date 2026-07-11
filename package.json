@@ -14,9 +14,11 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:e2e": "node e2e/smoke.mjs",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "setup:hand-tracking": "node scripts/setup-hand-tracking-assets.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "0.10.17",
     "@react-three/drei": "10.7.7",
     "@react-three/fiber": "9.6.1",
     "gl-matrix": "3.4.4",
