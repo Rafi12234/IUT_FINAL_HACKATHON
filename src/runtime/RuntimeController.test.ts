@@ -341,3 +341,82 @@ describe('RuntimeController — arbitration', () => {
     expect(h.rc.getJointValues().joint_2).toBeCloseTo(0.4, 3);
   });
 });
+
+describe('RuntimeController — finger source arbitration', () => {
+  it('finger move_joints is accepted as a valid manual source', () => {
+    const h = harness();
+    const r = h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_1: 0.4 } });
+    expect(r.accepted).toBe(true);
+    h.runToIdle();
+    expect(h.rc.getJointValues().joint_1).toBeCloseTo(0.4, 3);
+  });
+
+  it('finger cannot submit commands when E-stopped', () => {
+    const h = harness();
+    h.rc.emergencyStop();
+    h.tick(16);
+    const r = h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_1: 0.3 } });
+    expect(r.accepted).toBe(false);
+    expect(r.reason).toMatch(/E-stopped/i);
+  });
+
+  it('finger cannot seize ownership from autonomous execution', () => {
+    const h = harness();
+    h.rc.submit(move({ joint_1: 1.0 }, 'autonomous'));
+    h.tick(50); // start executing
+    expect(h.snapshot()?.activeCommand?.source).toBe('autonomous');
+
+    const r = h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_2: 0.5 } });
+    expect(r.accepted).toBe(false);
+    expect(r.reason).toMatch(/autonomous.*owns/i);
+  });
+
+  it('finger can replace its own active move_joints (same-source slider replace)', () => {
+    const h = harness();
+    h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_1: 1.0 } });
+    h.tick(50);
+    expect(h.snapshot()?.activeCommand?.source).toBe('finger');
+
+    // A new finger command replaces the in-flight one
+    const r = h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_1: 0.3 } });
+    expect(r.accepted).toBe(true);
+    h.runToIdle();
+    expect(h.rc.getJointValues().joint_1).toBeCloseTo(0.3, 2);
+  });
+
+  it('system stop overrides an active finger command', () => {
+    const h = harness();
+    h.rc.submit({ type: 'move_joints', source: 'finger', joints: { joint_1: 1.5 } });
+    // Tick until executing or 10 tries
+    for (let i = 0; i < 10; i++) {
+      h.tick(50);
+      if (h.rc.getState() === 'EXECUTING') break;
+    }
+    expect(h.rc.getState()).toBe('EXECUTING');
+
+    const r = h.rc.submit({ type: 'stop', source: 'system' });
+    expect(r.accepted).toBe(true);
+    expect(h.rc.getState()).toBe('READY');
+    const held = h.rc.getJointValues().joint_1!;
+    h.tick(50);
+    expect(h.rc.getJointValues().joint_1).toBeCloseTo(held, 5);
+  });
+
+
+  it('finger cartesian_jog routes through the IK path correctly', async () => {
+    const ikSolve = async (p: Vec3) => verifiedIk({ joint_1: p[0] });
+    const h = harness({ ikSolve });
+    const r = h.rc.submit({
+      type: 'cartesian_jog',
+      source: 'finger',
+      delta: [0.05, 0, 0],
+      approachAxis: [0, 0, -1],
+    });
+    expect(r.accepted).toBe(true);
+    h.tick(16);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(h.rc.getState()).toBe('EXECUTING');
+  });
+});
+
