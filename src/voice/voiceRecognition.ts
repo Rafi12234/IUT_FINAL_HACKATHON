@@ -71,7 +71,6 @@ export class VoiceRecognition {
   /** True while an utterance is still being spoken — protects against the
    *  browser silently ending recognition (e.g. transient network hiccup). */
   private wantListening = false;
-  private lastLang = 'en-US';
   private errored = false;
   private readonly events: VoiceRecognitionEvents;
 
@@ -92,7 +91,6 @@ export class VoiceRecognition {
       );
       return;
     }
-    this.lastLang = lang;
     this.errored = false;
     this.wantListening = true;
     const rec = new Ctor();
