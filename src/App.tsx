@@ -16,6 +16,9 @@ import { VoiceControlPanel } from './ui/VoiceControlPanel';
 import { TopBar } from './ui/TopBar';
 import { CameraControls } from './ui/CameraControls';
 import { DemoMode } from './ui/DemoMode';
+import { FingerCameraControlPanel } from './finger/FingerCameraControlPanel';
+import { FingerCursorOverlay } from './finger/FingerCursorOverlay';
+import { FingerViewportHud } from './finger/FingerViewportHud';
 import { EventTimeline } from './ui/EventTimeline';
 
 const KEY_CONFIG_URL = '/config/key.config.json';
@@ -51,6 +54,7 @@ export function App() {
           <div className="rail-head">Controls</div>
           <RuntimePanel />
           <ManualControlPanel />
+          <FingerCameraControlPanel />
           <VoiceControlPanel />
           <JointControlPanel />
           <PinPanel keyConfig={keyConfig} />
@@ -59,6 +63,8 @@ export function App() {
         <main className="stage">
           <div className="viewport">
             <SceneRoot keyConfig={keyConfig} />
+            <FingerCursorOverlay />
+            <FingerViewportHud />
             <CameraControls />
             <StatusOverlay status={status} error={error} configError={configError} />
             <DemoMode />
