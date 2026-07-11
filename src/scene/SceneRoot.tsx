@@ -8,6 +8,7 @@ import { RobotModel } from './RobotModel';
 import { KeyPanel } from './KeyPanel';
 import { CameraRig } from './CameraRig';
 import { PinPathOverlay, TcpMarker, TargetMarker } from './Markers';
+import { FingerJointHandles } from '../finger/FingerJointHandles';
 
 interface SceneRootProps {
   keyConfig: KeyConfig | null;
@@ -99,6 +100,7 @@ export function SceneRoot({ keyConfig }: SceneRootProps) {
       {tcp ? <TcpMarker position={tcp} /> : null}
       {targetPosition ? <TargetMarker position={targetPosition} /> : null}
       <PinPathOverlay />
+      <FingerJointHandles />
 
       <CameraRig />
       <OrbitControls makeDefault enableDamping dampingFactor={0.08} target={[0.5, 0, 0.2]} />
