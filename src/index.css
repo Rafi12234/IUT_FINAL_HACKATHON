@@ -1332,6 +1332,199 @@ body {
 }
 
 /* =============================================================================
+   Finger Teleoperation
+   ============================================================================= */
+
+.finger-panel {
+  position: relative;
+}
+
+.finger-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.finger-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.finger-preview-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.finger-preview-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.finger-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 10px 0 4px;
+}
+
+.finger-mode-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.finger-tab {
+  flex: 1;
+  padding: 5px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.finger-tab:hover {
+  background: var(--panel-3);
+  color: var(--text);
+}
+
+.finger-tab.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+
+.finger-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.finger-diag-toggle {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.finger-status-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--panel-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.finger-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  gap: 6px;
+}
+
+.finger-rejection {
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+}
+
+.ok-text { color: var(--ok); }
+.warn-text { color: var(--warn); }
+
+/* Virtual cursor overlay */
+.finger-cursor {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: border-color 0.1s, background 0.1s, transform 0.05s;
+  background: rgba(34, 211, 238, 0.15);
+}
+
+.finger-cursor.is-hovering {
+  border-color: var(--warn);
+  background: rgba(246, 179, 90, 0.2);
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+.finger-cursor.is-grabbing {
+  border-color: var(--ok);
+  background: rgba(52, 211, 153, 0.25);
+  transform: translate(-50%, -50%) scale(0.85);
+}
+
+.finger-cursor.is-blocked {
+  border-color: var(--danger);
+  background: rgba(244, 88, 106, 0.2);
+}
+
+/* Viewport HUD */
+.finger-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(11, 14, 20, 0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  pointer-events: none;
+  z-index: 100;
+  min-width: 180px;
+  font-size: 11px;
+}
+
+.finger-hud-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.finger-hud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  line-height: 1.5;
+}
+
+.finger-hud-hint {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* =============================================================================
    Motion preferences
    ============================================================================= */
 
@@ -1344,3 +1537,4 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
