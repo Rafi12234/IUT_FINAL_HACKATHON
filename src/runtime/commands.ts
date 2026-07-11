@@ -13,6 +13,7 @@ export const COMMAND_SOURCES = [
   'dashboard',
   'joystick',
   'keyboard',
+  'finger',
   'voice',
   'autonomous',
   'agent',
@@ -31,6 +32,7 @@ export const SOURCE_PRIORITY: Record<CommandSource, number> = {
   agent: 40,
   voice: 30,
   dashboard: 20,
+  finger: 18,
   keyboard: 15,
   joystick: 10,
 };
@@ -107,6 +109,7 @@ export const MANUAL_SOURCES: ReadonlySet<CommandSource> = new Set<CommandSource>
   'dashboard',
   'joystick',
   'keyboard',
+  'finger',
 ]);
 export function isManualSource(source: CommandSource): boolean {
   return MANUAL_SOURCES.has(source);
